@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "206915112124",
+    "project_id": "dashboard-rpm",
+    "storage_bucket": "dashboard-rpm.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:206915112124:android:24b6a3bdf0b734c54154b9",
+        "android_client_info": {
+          "package_name": "com.example.dashboard_rpm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7wPAdT1fT7aYKnEo6hgxIsvIput9CEIQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
