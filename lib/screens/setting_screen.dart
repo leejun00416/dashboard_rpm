@@ -8,19 +8,23 @@ import 'package:provider/provider.dart';
 bool twentyFourHoursRule=true;
 const double settingValueTextSize=20;
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+class SettingScreen extends StatefulWidget {
+  const SettingScreen({super.key});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<SettingScreen> createState() => SettingScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class SettingScreenState extends State<SettingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          leading:IconButton(onPressed:(){}, icon: Icon(Icons.arrow_left_outlined),color: Colors.black,),
+          leading:IconButton(onPressed:(){
+            Navigator.of(context).pop();
+          },
+          icon: Icon(Icons.arrow_left_outlined),color: Colors.black,
+        ),
           title:Text("설정",style:TextStyle(fontSize:27, color:Colors.black,),),
         ),
         body: Container(
