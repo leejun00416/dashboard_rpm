@@ -1,12 +1,41 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dashboard_rpm/providers/auth_provider.dart';
+import '../repositories/auth_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 bool twentyFourHoursRule=true;
 const double settingValueTextSize=20;
+class Setting {
+  final FirebaseAuth firebaseAuth;
+  final FirebaseStorage firebaseStorage;
+  final FirebaseFirestore firebaseFirestore;
+
+  const Setting({
+    required this.firebaseAuth,
+    required this.firebaseStorage,
+    required this.firebaseFirestore,
+  });
+  Future<void> getData({
+    required String email,
+    required String nickName,
+    required String password,
+  }) async{
+    UserCredential userCredential =
+    await firebaseAuth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+    );
+    String uid = userCredential.user!.uid;
+    //var result= await FirebaseFirestore.instance.collection('usr').doc(uid).get();
+  }
+}
+
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -38,23 +67,26 @@ class SettingScreenState extends State<SettingScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text('닉네임',style:TextStyle(fontSize:settingValueTextSize, color:Colors.black),),
-                            //TextButton(onPressed:(){},child:Text(),),
-                            /*StreamBuilder(
-                        stream: FirebaseFirestore.instance.collection('user').snapshots(),
-                        builder: (context,AsyncSnapshot<QuerySnapshot<Map<String,dynamic>>> snapshot) {
-                          if(snapshot.hasError){
-                            return Text(
-                              '...',style:TextStyle(fontSize:15,color: Colors.grey),
-                            );
-                          }
-                          itemCount:snapshot.data!.docs.length;
-                          itemBuilder:(context, index) {
-                          return Text(
-                            snapshot.data!.docs[index]['nickname'],
-                            style: TextStyle(fontSize: 15, color: Colors.grey),
-                          );
-                        };
-                      }),*/
+                            TextButton(
+                              onPressed:(){},
+                              child: StreamBuilder(
+                                  stream: FirebaseFirestore.instance.collection('user').snapshots(),
+                                  builder: (context, snapshot) {
+                                    if(snapshot.hasError){
+                                      return Text(
+                                        '...',style:TextStyle(fontSize:15,color: Colors.grey),
+                                      );
+                                    }
+                                    itemCount:snapshot.data!.docs.length;
+                                    itemBuilder:(context, index) {
+                                      return Text(
+                                        snapshot.data!.docs[index]['nickname'],
+                                        style: TextStyle(fontSize: 15, color: Colors.grey),
+                                      );
+                                    };
+                                  }
+                              )
+                            ),
                           ]
                       )
                   ),
