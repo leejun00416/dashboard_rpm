@@ -180,7 +180,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text('인증 메일을 전송했습니다.'),
-                                    duration: Duration(seconds: 120),
+                                    duration: Duration(seconds: 30),
                                   ),
                                 );
                               } on CustomException catch (e) {
@@ -204,7 +204,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           ? () => Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => SignupScreen(),
+                                builder: (context) => SigninScreen(),
                               ))
                           : null,
                       child: Text(
