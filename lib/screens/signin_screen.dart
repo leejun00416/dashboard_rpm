@@ -178,7 +178,7 @@ class _SigninScreenState extends State<SigninScreen> {
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                              Image.asset('android_light_rd_na@1x.png'),
+                              Image.asset('assets/images/android_light_rd_na@1x.png'),
                               const SizedBox(
                                width: 10,
                               ), // SizedBox

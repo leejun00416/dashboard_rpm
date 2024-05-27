@@ -24,7 +24,8 @@ class AuthRepository {
     required String password,
   }) async {
     try {
-      UserCredential userCredential = await firebaseAuth.signInWithEmailAndPassword(
+      UserCredential userCredential = await firebaseAuth
+          .signInWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -49,7 +50,6 @@ class AuthRepository {
         message: e.toString(),
       );
     }
-
   }
 
   Future<void> signUp({
@@ -59,7 +59,43 @@ class AuthRepository {
   }) async {
     try {
       UserCredential userCredential =
-          await firebaseAuth.createUserWithEmailAndPassword(
+      await firebaseAuth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      String uid = userCredential.user!.uid;
+
+      await userCredential.user!.sendEmailVerification();
+
+      await firebaseFirestore.collection('users').doc(uid).set({
+        'uid': uid,
+        'email': email,
+        'nickName': nickName,
+      });
+
+      firebaseAuth.signOut();
+    } on FirebaseException catch (e) {
+      throw CustomException(
+        code: e.code,
+        message: e.message!,
+      );
+    } catch (e) {
+      throw CustomException(
+        code: 'Exception',
+        message: e.toString(),
+      );
+    }
+  }
+
+  Future<void> signInWithGoogle({
+    required String email,
+    required String nickName,
+    required String password,
+  }) async {
+    try {
+      UserCredential userCredential =
+      await firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
