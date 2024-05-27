@@ -6,6 +6,8 @@ import '../repositories/auth_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dashboard_rpm/screens/setting_category_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -47,15 +49,28 @@ class SettingScreen extends StatefulWidget {
   @override
   State<SettingScreen> createState() => SettingScreenState();
 }
+var AlramTime;
 
-class SettingScreenState extends State<SettingScreen> {
+void updateAlramTime() async{
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('time',AlramTime.toString());
+}
+void bringAlramTime() async{
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final String? time=prefs.getString('time');
+  AlramTime=DateTime.parse(time??"0");
+}
+
+class SettingScreenState extends State<SettingScreen>{
   StreamController<String> streamController = StreamController<String>();
 
   @override
   Widget build(BuildContext context) {
+    bringAlramTime();
     return Scaffold(
         appBar: AppBar(
-          leading:IconButton(onPressed:(){
+          leading:IconButton(onPressed:() async{
+            updateAlramTime();
             Navigator.of(context).pop();
           },
           icon: Icon(Icons.arrow_left_outlined),color: Colors.black,
@@ -101,6 +116,22 @@ class SettingScreenState extends State<SettingScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children:[
                             Text('일정 알림',style:TextStyle(fontSize:settingValueTextSize, color:Colors.black),),
+                            TextButton(
+                              onPressed:() async{
+                                <Widget>[
+                                  hourMinute12H()
+                                ];
+                              },
+                              child:
+                                Text(
+                                  AlramTime.hour.toString().padLeft(2,'0')+":"+
+                                  AlramTime.minute.toString().padLeft(2,'0'),
+                                  style: TextStyle(
+                                    fontSize: settingValueTextSize,
+                                    color:Colors.grey,
+                                  )
+                                )
+                            )
                           ]
                       )
                   ),
@@ -110,7 +141,14 @@ class SettingScreenState extends State<SettingScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children:[
                             Text('카테고리 설정',style:TextStyle(fontSize:settingValueTextSize, color:Colors.black),),
-                            IconButton(onPressed:(){}, icon: Icon(Icons.add_circle),color: Colors.blue,),
+                            IconButton(onPressed:(){
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:((context) => const SettingCategoryScreen()),
+                                  )
+                              );
+                            }, icon: Icon(Icons.add_circle),color: Colors.blue,),
                           ]
                       )
                   ),
@@ -119,4 +157,17 @@ class SettingScreenState extends State<SettingScreen> {
         )
     );
   }
+
+  Widget hourMinute12H(){
+    return new TimePickerSpinner(
+      is24HourMode: twentyFourHoursRule,
+      onTimeChange: (time) {
+        setState(() async{
+          AlramTime = time;
+        });
+      },
+    );
+  }
+
+
 }
