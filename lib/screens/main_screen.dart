@@ -23,49 +23,49 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        height: 50,
-        child:Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children:[
-            SizedBox(width:40),
-            Container(
-              child:Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children:[
-                    TextButton(
-                      child:Text('Week'),
-                      onPressed: (){
-                      },
+          height: 50,
+          child:Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children:[
+                SizedBox(width:40),
+                Container(
+                    child:Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children:[
+                          TextButton(
+                            child:Text('Week'),
+                            onPressed: (){
 
-                    ),
-                    TextButton(
-                      child:Text('Today'),
-                      onPressed: (){
+                            },
+                          ),
+                          TextButton(
+                            child:Text('Today'),
+                            onPressed: (){
 
-                      },
-                    ),
-                    TextButton(
-                      child:Text('Stat'),
-                      onPressed: (){
+                            },
+                          ),
+                          TextButton(
+                            child:Text('Stat'),
+                            onPressed: (){
 
-                      },
-                    ),
-                  ]
-              )
-            ),
-            IconButton(
-              onPressed: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:((context) => const SettingScreen()),
-                  )
-                );
-              },
-              icon:Icon(Icons.settings), //image.asset(''), iconSize:50,
-            )
-          ]
-        )
+                            },
+                          ),
+                        ]
+                    )
+                ),
+                IconButton(
+                  onPressed: (){
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:((context) => const SettingScreen()),
+                        )
+                    );
+                  },
+                  icon:Icon(Icons.settings), //image.asset(''), iconSize:50,
+                )
+              ]
+          )
       ),
     );
   }
