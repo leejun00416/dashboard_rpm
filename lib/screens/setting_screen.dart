@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dashboard_rpm/providers/auth_provider.dart';
 import '../repositories/auth_repository.dart';
@@ -11,7 +13,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 bool twentyFourHoursRule=true;
 const double settingValueTextSize=20;
-class Setting {
+
+/*class Setting {
   final FirebaseAuth firebaseAuth;
   final FirebaseStorage firebaseStorage;
   final FirebaseFirestore firebaseFirestore;
@@ -21,6 +24,7 @@ class Setting {
     required this.firebaseStorage,
     required this.firebaseFirestore,
   });
+
   Future<void> getData({
     required String email,
     required String nickName,
@@ -32,9 +36,9 @@ class Setting {
         password: password,
     );
     String uid = userCredential.user!.uid;
-    //var result= await FirebaseFirestore.instance.collection('usr').doc(uid).get();
+    var userInformation= await FirebaseFirestore.instance.collection('users').doc(uid).get();
   }
-}
+}*/
 
 
 class SettingScreen extends StatefulWidget {
@@ -45,6 +49,8 @@ class SettingScreen extends StatefulWidget {
 }
 
 class SettingScreenState extends State<SettingScreen> {
+  StreamController<String> streamController = StreamController<String>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,7 +64,7 @@ class SettingScreenState extends State<SettingScreen> {
         ),
         body: Container(
             padding: EdgeInsets.fromLTRB(15, 25, 15, 10),
-            child: Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   //닉네임
@@ -67,26 +73,7 @@ class SettingScreenState extends State<SettingScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text('닉네임',style:TextStyle(fontSize:settingValueTextSize, color:Colors.black),),
-                            TextButton(
-                              onPressed:(){},
-                              child: StreamBuilder(
-                                  stream: FirebaseFirestore.instance.collection('user').snapshots(),
-                                  builder: (context, snapshot) {
-                                    if(snapshot.hasError){
-                                      return Text(
-                                        '...',style:TextStyle(fontSize:15,color: Colors.grey),
-                                      );
-                                    }
-                                    itemCount:snapshot.data!.docs.length;
-                                    itemBuilder:(context, index) {
-                                      return Text(
-                                        snapshot.data!.docs[index]['nickname'],
-                                        style: TextStyle(fontSize: 15, color: Colors.grey),
-                                      );
-                                    };
-                                  }
-                              )
-                            ),
+                            TextButton(onPressed:(){},child : Text('고치는 중'),),
                           ]
                       )
                   ),
@@ -96,7 +83,6 @@ class SettingScreenState extends State<SettingScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children:[
                             Text('24시간으로 표현',style:TextStyle(fontSize:settingValueTextSize, color:Colors.black),),
-
                             CupertinoSwitch(
                               value: twentyFourHoursRule,
                               activeColor: CupertinoColors.activeBlue,

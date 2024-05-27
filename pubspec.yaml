@@ -45,6 +45,7 @@ dependencies:
   state_notifier: ^1.0.0
   flutter_state_notifier: ^1.0.0
   google_sign_in: ^6.2.1
+  flutter_time_picker_spinner: ^2.0.0
 
 dev_dependencies:
   flutter_test:
