@@ -1,47 +1,19 @@
 import 'dart:async';
-import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:dashboard_rpm/providers/auth_provider.dart';
-import '../repositories/auth_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dashboard_rpm/screens/setting_category_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 bool twentyFourHoursRule=true;
 const double settingValueTextSize=20;
-
-/*class Setting {
-  final FirebaseAuth firebaseAuth;
-  final FirebaseStorage firebaseStorage;
-  final FirebaseFirestore firebaseFirestore;
-
-  const Setting({
-    required this.firebaseAuth,
-    required this.firebaseStorage,
-    required this.firebaseFirestore,
-  });
-
-  Future<void> getData({
-    required String email,
-    required String nickName,
-    required String password,
-  }) async{
-    UserCredential userCredential =
-    await firebaseAuth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-    );
-    String uid = userCredential.user!.uid;
-    var userInformation= await FirebaseFirestore.instance.collection('users').doc(uid).get();
-  }
-}*/
-
+final firestore=FirebaseFirestore.instance;
+var AlramTime;
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -49,7 +21,6 @@ class SettingScreen extends StatefulWidget {
   @override
   State<SettingScreen> createState() => SettingScreenState();
 }
-var AlramTime;
 
 void updateAlramTime() async{
   final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -66,6 +37,9 @@ class SettingScreenState extends State<SettingScreen>{
 
   @override
   Widget build(BuildContext context) {
+
+    final user = FirebaseAuth.instance.currentUser;
+    String changedNickName="";
     bringAlramTime();
     return Scaffold(
         appBar: AppBar(
@@ -88,7 +62,46 @@ class SettingScreenState extends State<SettingScreen>{
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text('닉네임',style:TextStyle(fontSize:settingValueTextSize, color:Colors.black),),
-                            TextButton(onPressed:(){},child : Text('고치는 중'),),
+                            TextButton(onPressed:(){
+                              showDialog(
+                                context:context,
+                                barrierDismissible: false,
+                                builder:(BuildContext context){
+                                  return AlertDialog(
+                                    content: TextField(
+                                      onChanged: (text){
+                                        setState(() {
+                                          changedNickName=text;
+                                        });
+                                      },
+                                      decoration: InputDecoration(
+                                        labelText:"${firestore.collection('users').doc("nickName")}",
+                                      )
+                                    ),
+                                    actions:[
+                                      TextButton(onPressed:(){
+                                        changedNickName="";
+                                        Navigator.of(context).pop();
+                                      },
+                                        child:Text('취소',style:TextStyle(color:Colors.blue)),
+                                      ),
+                                      TextButton(onPressed:() async{
+                                        if(user!=null && changedNickName!="") {
+                                          await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+                                            'nickName': changedNickName,
+                                          });
+                                        }
+                                        Navigator.of(context).pop();
+                                      },
+                                        child:Text('확인',style:TextStyle(color:Colors.blue)),
+                                      )
+                                    ]
+                                  );
+                                }
+                              );
+                            },
+                              child:Text("${firestore.collection('users').doc("nickName")}",style:TextStyle(fontSize:20, color:Colors.grey)),
+                            ),
                           ]
                       )
                   ),
@@ -154,7 +167,19 @@ class SettingScreenState extends State<SettingScreen>{
                   ),
                 ]
             )
-        )
+        ),
+        bottomNavigationBar: BottomAppBar(
+          child:Row(
+            children:[
+              TextButton(
+                onPressed: () async{
+                  await context.read<AuthProvideres>().signOut();
+                },
+                child:Text('로그아웃',style:TextStyle(color:Colors.red,),),
+              )
+            ]
+          ),
+        ),
     );
   }
 

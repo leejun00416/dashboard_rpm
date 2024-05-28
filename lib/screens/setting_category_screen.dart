@@ -23,7 +23,7 @@ class _SettingCategoryScreenState extends State<SettingCategoryScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children:[
-              // 폴더와 카테코리 추가 버튼
+              // 폴더와 카테고리 추가 버튼
               Container(
                 child:Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -43,14 +43,6 @@ class _SettingCategoryScreenState extends State<SettingCategoryScreen> {
                    Icon(Icons.folder,color: Colors.black),
                   ]
                 )
-              ),
-              Container(
-                  child:Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children:[
-                        Icon(Icons.folder,color: Colors.black),
-                      ]
-                  )
               ),
             ]
           )
