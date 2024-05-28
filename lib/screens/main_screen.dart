@@ -1,11 +1,19 @@
-import 'dart:math';
 
 //import 'package:dashboard_rpm/providers/auth_provider.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:dashboard_rpm/providers/auth_provider.dart';
+import 'package:dashboard_rpm/screens/otherday_screen.dart';
 import 'package:flutter/material.dart';
 //import 'package:provider/provider.dart';
 import 'package:dashboard_rpm/screens/setting_screen.dart';
-import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+//import 'package:flutter_localizations/flutter_localizations.dart';
+
+
+var now = new DateTime.now();
+var new_now = new DateTime.now();
+String formatDate = DateFormat('MM/dd (E)','ko').format(now);
+
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -15,6 +23,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+
   //그리드 안 컨테이너 정보 얻기 함수
   final GlobalKey _containerKey = GlobalKey();
   Size? size;
@@ -42,6 +51,7 @@ class _MainScreenState extends State<MainScreen> {
       Size size = renderBox.size;
       return size;
     }
+    return null;
   }
 
   Offset? _getOffset() {
@@ -51,11 +61,15 @@ class _MainScreenState extends State<MainScreen> {
       Offset offset = renderBox.localToGlobal(Offset.zero);
       return offset;
     }
+    return null;
   }
+
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
+
       appBar: AppBar(
         backgroundColor: Colors.cyan,
         elevation: 10,
@@ -66,7 +80,32 @@ class _MainScreenState extends State<MainScreen> {
           children: [
             IconButton(onPressed: (){}, icon: Icon(Icons.arrow_back_ios),),
 
-            Text("5/27 (월)"),
+            ElevatedButton(
+              onPressed: () async {
+                final selectedDate = await showDatePicker(
+                  context: context,
+                  initialDate: now,
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2100),
+                  initialEntryMode: DatePickerEntryMode.calendarOnly,
+                  //locale: const Locale('ko','KR'),
+                );
+                if (selectedDate != null) {
+                  setState(() {
+                    new_now = selectedDate;
+                    formatDate = DateFormat('MM/dd (E)','ko').format(selectedDate);
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => OtherdayScreen(),
+                        ));
+                  });
+                }
+              },
+              child: Text(
+                '$formatDate'
+              ),
+            ),
 
             IconButton(onPressed: (){}, icon: Icon(Icons.arrow_forward_ios), ),
           ],
@@ -195,6 +234,14 @@ class _MainScreenState extends State<MainScreen> {
 
                 ],
               ),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () async {
+                    await context.read<AuthProvideres>().signOut();
+                  },
+                  child: Text('로그아웃'),
+                ),
+              ),
             ],
           ),
 
@@ -249,4 +296,5 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
   }
+
 }

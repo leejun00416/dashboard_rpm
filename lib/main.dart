@@ -3,14 +3,15 @@ import 'package:dashboard_rpm/firebase_options.dart';
 import 'package:dashboard_rpm/providers/auth_provider.dart';
 import 'package:dashboard_rpm/providers/auth_state.dart';
 import 'package:dashboard_rpm/repositories/auth_repository.dart';
-import 'package:dashboard_rpm/screens/signin_screen.dart';
 import 'package:dashboard_rpm/screens/splash_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_state_notifier/flutter_state_notifier.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart' show GlobalCupertinoLocalizations, GlobalMaterialLocalizations, GlobalWidgetsLocalizations;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +43,15 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        localizationsDelegates: <LocalizationsDelegate<Object>>[
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: [
+          Locale('ko', 'KR'),
+        ],
+        locale: const Locale('ko'),
         debugShowCheckedModeBanner: false,
         home: SplashScreen(),
       ),
