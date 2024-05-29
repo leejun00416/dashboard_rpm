@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:dashboard_rpm/providers/auth_provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,6 +15,7 @@ bool twentyFourHoursRule=true;
 const double settingValueTextSize=20;
 final firestore=FirebaseFirestore.instance;
 var AlramTime;
+String current_Nickname="";
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -38,9 +40,19 @@ class SettingScreenState extends State<SettingScreen>{
   @override
   Widget build(BuildContext context) {
 
+    bool isTimeChanged=false;
+    var temporaryTime=DateTime.now();
+    if (AlramTime == null){
+      AlramTime=DateTime.now();
+    }
     final user = FirebaseAuth.instance.currentUser;
+    var uid="";
+    if(user!=null){
+      uid=user.uid;
+    }
     String changedNickName="";
     bringAlramTime();
+
     return Scaffold(
         appBar: AppBar(
           leading:IconButton(onPressed:() async{
@@ -75,7 +87,7 @@ class SettingScreenState extends State<SettingScreen>{
                                         });
                                       },
                                       decoration: InputDecoration(
-                                        labelText:"${firestore.collection('users').doc("nickName")}",
+                                        labelText:"${firestore.collection('users').doc("nickName").get()}",
                                       )
                                     ),
                                     actions:[
@@ -100,7 +112,8 @@ class SettingScreenState extends State<SettingScreen>{
                                 }
                               );
                             },
-                              child:Text("${firestore.collection('users').doc("nickName")}",style:TextStyle(fontSize:20, color:Colors.grey)),
+                              child:
+                                Text('Error',style:TextStyle(fontSize:20, color:Colors.grey,),),
                             ),
                           ]
                       )
@@ -130,10 +143,42 @@ class SettingScreenState extends State<SettingScreen>{
                           children:[
                             Text('일정 알림',style:TextStyle(fontSize:settingValueTextSize, color:Colors.black),),
                             TextButton(
-                              onPressed:() async{
-                                <Widget>[
-                                  hourMinute12H()
-                                ];
+                              onPressed:(){
+                                showDialog(
+                                  context:context,
+                                  barrierDismissible:false,
+                                  builder:(BuildContext context){
+                                    return AlertDialog(
+                                      title: Text("일정 알림 시간"),
+                                      content:TimePickerSpinner(
+                                        is24HourMode: twentyFourHoursRule,
+                                        onTimeChange: (time) {
+                                          setState(() async{
+                                            temporaryTime=time;
+                                            isTimeChanged=true;
+                                          });
+                                        },
+                                      ),
+                                      actions:[
+                                        TextButton(onPressed:(){
+                                          changedNickName="";
+                                          Navigator.of(context).pop();
+                                        },
+                                          child:Text('취소',style:TextStyle(color:Colors.blue)),
+                                        ),
+                                        TextButton(onPressed:() async{
+                                          if(isTimeChanged){
+                                            AlramTime = temporaryTime;
+                                            isTimeChanged=false;
+                                          }
+                                          Navigator.of(context).pop();
+                                        },
+                                          child:Text('확인',style:TextStyle(color:Colors.blue)),
+                                        )
+                                      ]
+                                    );
+                                  }
+                                );
                               },
                               child:
                                 Text(
@@ -182,17 +227,4 @@ class SettingScreenState extends State<SettingScreen>{
         ),
     );
   }
-
-  Widget hourMinute12H(){
-    return new TimePickerSpinner(
-      is24HourMode: twentyFourHoursRule,
-      onTimeChange: (time) {
-        setState(() async{
-          AlramTime = time;
-        });
-      },
-    );
-  }
-
-
 }
