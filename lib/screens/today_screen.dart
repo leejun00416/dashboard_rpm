@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+
 class SchedulePage extends StatefulWidget {
   @override
   _SchedulePageState createState() => _SchedulePageState();
@@ -45,39 +46,49 @@ class _SchedulePageState extends State<SchedulePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            IconButton(
-              icon: Icon(Icons.keyboard_arrow_left),
-              onPressed: () {},
-            ),
-            TextButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text('어느 날짜로 갈까요?'),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text('확인'),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              child: Text('5/7 (화)', style: TextStyle(color: Colors.black)),
-            ),
-            IconButton(
-              icon: Icon(Icons.keyboard_arrow_right),
-              onPressed: () {},
-            ),
-          ],
+        title: Container(
+          color: Colors.black54,
+          padding: EdgeInsets.fromLTRB(0, 3, 0, 3),
+
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: Icon(Icons.keyboard_arrow_left),
+                color: Colors.grey,
+                onPressed: () {},
+              ),
+              TextButton(
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: Colors.black87,
+                ),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('어느 날짜로 갈까요?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('확인'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                child: Text('5/7 (화)', style: TextStyle(color: Colors.white)),
+              ),
+              IconButton(
+                icon: Icon(Icons.keyboard_arrow_right),
+                color: Colors.grey,
+                onPressed: () {},
+              ),
+            ],
+          ),
         ),
       ),
       body: Column(
@@ -266,28 +277,39 @@ class _PlannerActionBar2State extends State<PlannerActionBar2> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(8.0),
+      padding: EdgeInsets.all(20.0),
       color: const Color(0xffefefeb),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Text(' 기록:', style: TextStyle(fontSize: 16.0)),
-          DropdownButton<String>(
-            value: _selectedItem,
-            style: TextStyle(
-              color: Colors.red,
+
+          Container(
+            width: 85,
+            height: 33,
+            alignment: Alignment.center,
+            //color: Colors.amberAccent,
+            decoration: BoxDecoration(
+                color: Colors.amberAccent,
+                borderRadius: BorderRadius.all(Radius.circular(10))
             ),
-            items: _dropdownItems.map((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            onChanged: (newValue) {
-              setState(() {
-                _selectedItem = newValue!;
-              });
-            },
+            child: DropdownButton<String>(
+              value: _selectedItem,
+              style: TextStyle(
+                color: Colors.black,
+              ),
+              items: _dropdownItems.map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value, style: TextStyle(fontSize: 16.0)),
+                );
+              }).toList(),
+              onChanged: (newValue) {
+                setState(() {
+                  _selectedItem = newValue!;
+                });
+              },
+            ),
           ),
           Text('하는 중', style: TextStyle(fontSize: 16.0)),
           IconButton(
