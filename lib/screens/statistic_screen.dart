@@ -13,8 +13,13 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-
+      body: Container(
+        child:Column(
+          children: [
+            Text("일주일 평균"),
+            Text("3시간 3분")
+          ]
+        )
       )
     );
   }
