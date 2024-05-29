@@ -60,7 +60,7 @@ class _SchedulePageState extends State<SchedulePage> {
     return Scaffold(
 
       appBar: AppBar(
-        backgroundColor: Colors.cyan,
+        backgroundColor: const Color(0xff656565),
         elevation: 10,
         automaticallyImplyLeading: false,
         title: Row(
@@ -124,7 +124,7 @@ class _SchedulePageState extends State<SchedulePage> {
       ),
 
       bottomNavigationBar: BottomAppBar(
-          height: 70,
+          height: 60,
           child:Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children:[
@@ -347,27 +347,37 @@ class _PlannerActionBar2State extends State<PlannerActionBar2> {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(8.0),
-      color: const Color(0xffefefeb),
+      color: const Color(0xffe1e1da),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Text(' 기록:', style: TextStyle(fontSize: 16.0)),
-          DropdownButton<String>(
-            value: _selectedItem,
-            style: TextStyle(
-              color: Colors.red,
+          Container(
+            width: 87,
+            height: 38,
+            alignment: Alignment.center,
+            //color: Colors.amberAccent,
+            decoration: BoxDecoration(
+                color: Colors.amberAccent,
+                borderRadius: BorderRadius.all(Radius.circular(10))
             ),
-            items: _dropdownItems.map((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            onChanged: (newValue) {
-              setState(() {
-                _selectedItem = newValue!;
-              });
-            },
+            child: DropdownButton<String>(
+              value: _selectedItem,
+              style: TextStyle(
+                color: Colors.black,
+              ),
+              items: _dropdownItems.map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value, style: TextStyle(fontSize: 16.0)),
+                );
+              }).toList(),
+              onChanged: (newValue) {
+                setState(() {
+                  _selectedItem = newValue!;
+                });
+              },
+            ),
           ),
           Text('하는 중', style: TextStyle(fontSize: 16.0)),
           IconButton(
