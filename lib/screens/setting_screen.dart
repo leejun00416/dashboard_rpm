@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:dashboard_rpm/providers/auth_provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -41,9 +40,9 @@ class SettingScreenState extends State<SettingScreen>{
   Widget build(BuildContext context) {
 
     bool isTimeChanged=false;
-    var temporaryTime=DateTime.now();
+    var temporaryTime=DateTime.now().add(Duration(hours:9));
     if (AlramTime == null){
-      AlramTime=DateTime.now();
+      AlramTime=DateTime.now().add(Duration(hours:9));
     }
     final user = FirebaseAuth.instance.currentUser;
     var uid="";
@@ -86,9 +85,6 @@ class SettingScreenState extends State<SettingScreen>{
                                           changedNickName=text;
                                         });
                                       },
-                                      decoration: InputDecoration(
-                                        labelText:"${firestore.collection('users').doc("nickName").get()}",
-                                      )
                                     ),
                                     actions:[
                                       TextButton(onPressed:(){
@@ -98,8 +94,8 @@ class SettingScreenState extends State<SettingScreen>{
                                         child:Text('취소',style:TextStyle(color:Colors.blue)),
                                       ),
                                       TextButton(onPressed:() async{
-                                        if(user!=null && changedNickName!="") {
-                                          await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+                                        if(changedNickName!="") {
+                                          await FirebaseFirestore.instance.collection('users').doc(uid).update({
                                             'nickName': changedNickName,
                                           });
                                         }
@@ -113,7 +109,20 @@ class SettingScreenState extends State<SettingScreen>{
                               );
                             },
                               child:
-                                Text('Error',style:TextStyle(fontSize:20, color:Colors.grey,),),
+                                StreamBuilder(
+                                  stream:firestore.collection('users').snapshots(),
+                                  builder:(context, snapshot){
+                                    if(snapshot.connectionState==ConnectionState.waiting){
+                                      return Text('Waiting');
+                                    }
+                                    final userList=snapshot.data?.docs.reversed.toList();
+                                    String usernickName="";
+                                    for(var tempUser in userList!){
+                                      usernickName='${tempUser['nickName']}';
+                                    }
+                                    return Text(usernickName);
+                                  }
+                                ),
                             ),
                           ]
                       )
@@ -170,6 +179,7 @@ class SettingScreenState extends State<SettingScreen>{
                                           if(isTimeChanged){
                                             AlramTime = temporaryTime;
                                             isTimeChanged=false;
+                                            updateAlramTime();
                                           }
                                           Navigator.of(context).pop();
                                         },
