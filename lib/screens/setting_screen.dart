@@ -118,7 +118,9 @@ class SettingScreenState extends State<SettingScreen>{
                                     final userList=snapshot.data?.docs.reversed.toList();
                                     String usernickName="";
                                     for(var tempUser in userList!){
-                                      usernickName='${tempUser['nickName']}';
+                                      if(tempUser['uid']==uid) {
+                                        usernickName = '${tempUser['nickName']}';
+                                      }
                                     }
                                     return Text(usernickName);
                                   }
