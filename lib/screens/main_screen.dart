@@ -1,3 +1,4 @@
+import 'package:dashboard_rpm/screens/setting_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -390,20 +391,6 @@ class _PlannerActionBar2State extends State<PlannerActionBar2> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class SettingScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Settings'),
-      ),
-      body: Center(
-        child: Text('Settings Page'),
       ),
     );
   }
