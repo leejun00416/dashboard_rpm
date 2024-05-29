@@ -1,16 +1,9 @@
-
-//import 'package:dashboard_rpm/providers/auth_provider.dart';
-import 'package:dashboard_rpm/screens/otherday_screen.dart';
 import 'package:flutter/material.dart';
-//import 'package:provider/provider.dart';
-import 'package:dashboard_rpm/screens/setting_screen.dart';
 import 'package:intl/intl.dart';
-//import 'package:flutter_localizations/flutter_localizations.dart';
-
 
 var now = new DateTime.now();
 var new_now = new DateTime.now();
-String formatDate = DateFormat('MM/dd (E)','ko').format(now);
+String formatDate = DateFormat('MM/dd (E)', 'ko').format(now);
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -19,9 +12,7 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-
-
-class _MainScreenState extends State<MainScreen> { // _MainScreenState 클래스 추가
+class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -34,7 +25,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MainScreen(), // MainScreen을 홈으로 사용하도록 수정
+      home: MainScreen(),
     );
   }
 }
@@ -53,28 +44,25 @@ class _SchedulePageState extends State<SchedulePage> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
       appBar: AppBar(
         backgroundColor: const Color(0xff656565),
         elevation: 10,
         automaticallyImplyLeading: false,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-
           children: [
-            IconButton(onPressed: () {
-              setState(() {
-                now = now.subtract(Duration(hours:24));
-                formatDate = DateFormat('MM/dd (E)','ko').format(now);
-              });
-            }
-              , icon: Icon(Icons.arrow_back_ios),),
-
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  now = now.subtract(Duration(hours: 24));
+                  formatDate = DateFormat('MM/dd (E)', 'ko').format(now);
+                });
+              },
+              icon: Icon(Icons.arrow_back_ios),
+            ),
             ElevatedButton(
               onPressed: () async {
                 final selectedDate = await showDatePicker(
@@ -83,37 +71,28 @@ class _SchedulePageState extends State<SchedulePage> {
                   firstDate: DateTime(2000),
                   lastDate: DateTime(2100),
                   initialEntryMode: DatePickerEntryMode.calendarOnly,
-                  //locale: const Locale('ko','KR'),
                 );
                 if (selectedDate != null) {
                   setState(() {
                     new_now = selectedDate;
-                    formatDate = DateFormat('MM/dd (E)','ko').format(selectedDate);
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => OtherdayScreen(),
-                        ));
+                    formatDate = DateFormat('MM/dd (E)', 'ko').format(selectedDate);
                   });
                 }
               },
-              child: Text(
-                '$formatDate'
-              ),
+              child: Text('$formatDate'),
             ),
-
-            IconButton(onPressed: (){
-              setState(() {
-                now = now.add(Duration(hours:24));
-                formatDate = DateFormat('MM/dd (E)','ko').format(now);
-              });
-            },
-              icon: Icon(Icons.arrow_forward_ios), ),
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  now = now.add(Duration(hours: 24));
+                  formatDate = DateFormat('MM/dd (E)', 'ko').format(now);
+                });
+              },
+              icon: Icon(Icons.arrow_forward_ios),
+            ),
           ],
         ),
       ),
-
-
       body: Column(
         children: [
           Expanded(child: ScheduleGrid()),
@@ -122,89 +101,123 @@ class _SchedulePageState extends State<SchedulePage> {
           PlannerActionBar2(),
         ],
       ),
-
       bottomNavigationBar: BottomAppBar(
-          height: 60,
-          child:Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children:[
-                SizedBox(width:40),
-                Container(
-                    child:Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children:[
-                          TextButton(
-                            child:Text('Week'),
-                            onPressed: (){
-
-                            },
-                          ),
-                          TextButton(
-                            child:Text('Today'),
-                            onPressed: (){
-
-                            },
-                          ),
-                          TextButton(
-                            child:Text('Stat'),
-                            onPressed: (){
-
-                            },
-                          ),
-                        ]
-                    )
-                ),
-                IconButton(
-                  onPressed: (){
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:((context) => const SettingScreen()),
-                        )
-                    );
-                  },
-                  icon:Icon(Icons.settings), //image.asset(''), iconSize:50,
-                )
-              ]
-          )
+        height: 60,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(width: 40),
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                    child: Text('Week'),
+                    onPressed: () {},
+                  ),
+                  TextButton(
+                    child: Text('Today'),
+                    onPressed: () {},
+                  ),
+                  TextButton(
+                    child: Text('Stat'),
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SettingScreen(),
+                  ),
+                );
+              },
+              icon: Icon(Icons.settings),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-class ScheduleGrid extends StatelessWidget {
+class ScheduleGrid extends StatefulWidget {
+  @override
+  _ScheduleGridState createState() => _ScheduleGridState();
+}
+
+class _ScheduleGridState extends State<ScheduleGrid> {
+  Set<int> _selectedSlots = Set<int>();
+  bool _isDragging = false;
+
+  void _handleSelection(int index) {
+    setState(() {
+      _selectedSlots.add(index);
+    });
+  }
+
+  void _startDragging(int index) {
+    setState(() {
+      _isDragging = true;
+      _handleSelection(index);
+    });
+  }
+
+  void _updateDragging(int index) {
+    if (_isDragging) {
+      _handleSelection(index);
+    }
+  }
+
+  void _stopDragging() {
+    setState(() {
+      _isDragging = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
-        //padding: EdgeInsets.fromLTRB(10,0,10,0),
         color: Colors.grey,
-        child:
-        Row(
+        child: Row(
           children: [
-            Expanded(child: buildLeftTimeSlots(), flex: 6,),
-            Expanded(child: buildMiddleTimeline(), flex: 1,),
-            Expanded(child: buildRightTimeSlots(), flex: 6,),
+            Expanded(child: buildTimeSlots(0), flex: 6),
+            Expanded(child: buildMiddleTimeline(), flex: 1),
+            Expanded(child: buildTimeSlots(144), flex: 6),
           ],
         ),
       ),
     );
   }
 
-  Widget buildLeftTimeSlots() {
+  Widget buildTimeSlots(int offset) {
     return GridView.builder(
-      //padding: EdgeInsets.fromLTRB(10,0,0,0),
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 6, // 가로로 여섯 개의 칸
+        crossAxisCount: 6,
         mainAxisSpacing: 1.0,
         crossAxisSpacing: 1.0,
-        childAspectRatio: 1, // 높이/너비 비율
+        childAspectRatio: 1,
       ),
-      itemCount: 144, // 오전 12시간
+      itemCount: 144,
       itemBuilder: (context, index) {
-        return TimeSlot(' ', Colors.white, index-60, index + 1);
+        int actualIndex = index + offset;
+        return GestureDetector(
+          onPanStart: (_) => _startDragging(actualIndex),
+          onPanUpdate: (_) => _updateDragging(actualIndex),
+          onPanEnd: (_) => _stopDragging(),
+          child: TimeSlot(
+            ' ',
+            _selectedSlots.contains(actualIndex) ? Colors.blue : Colors.white,
+            actualIndex,
+            actualIndex + 1,
+          ),
+        );
       },
     );
   }
@@ -214,32 +227,14 @@ class ScheduleGrid extends StatelessWidget {
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 1, // 가로로 여섯 개의 칸
+        crossAxisCount: 1,
         mainAxisSpacing: 0.0,
         crossAxisSpacing: 0.0,
-        childAspectRatio: 1, // 높이/너비 비율
+        childAspectRatio: 1,
       ),
-      itemCount: 24, // 오전 12시간
+      itemCount: 24,
       itemBuilder: (context, index) {
         return TimeSlot('$index', Colors.white38, index, index);
-      },
-    );
-  }
-
-  Widget buildRightTimeSlots() {
-    return GridView.builder(
-      //padding: EdgeInsets.fromLTRB(0,0,10,0),
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 6, // 가로로 두 개의 칸
-        mainAxisSpacing: 1.0,
-        crossAxisSpacing: 1.0,
-        childAspectRatio: 1, // 높이/너비 비율
-      ),
-      itemCount: 144, // 오후 12시간
-      itemBuilder: (context, index) {
-        return TimeSlot(" ", Colors.white, index, index +1);
       },
     );
   }
@@ -258,7 +253,14 @@ class TimeSlot extends StatelessWidget {
     return Container(
       color: color,
       alignment: Alignment.center,
-      child: Text(label, style: TextStyle(fontSize: 16.0, color: Colors.black, fontWeight: FontWeight.bold,)),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 16.0,
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
     );
   }
 }
@@ -266,23 +268,24 @@ class TimeSlot extends StatelessWidget {
 class NotesSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Expanded(child: Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: Colors.grey[200],
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: Colors.grey[200],
+        ),
+        margin: EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('ㅁ 화분에 물 주기', style: TextStyle(fontSize: 16.0)),
+            Text('ㅁ rpm 39페이지까지 풀기', style: TextStyle(fontSize: 16.0)),
+            Text('이번 주에는 꼭 운동가자', style: TextStyle(fontSize: 16.0)),
+          ],
+        ),
       ),
-      margin: EdgeInsets.all(16.0),
-      padding: EdgeInsets.all(16.0),
-
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('ㅁ 화분에 물 주기', style: TextStyle(fontSize: 16.0)),
-          Text('ㅁ rpm 39페이지까지 풀기', style: TextStyle(fontSize: 16.0)),
-          Text('이번 주에는 꼭 운동가자', style: TextStyle(fontSize: 16.0)),
-        ],
-      ),
-    ),);
+    );
   }
 }
 
@@ -356,10 +359,9 @@ class _PlannerActionBar2State extends State<PlannerActionBar2> {
             width: 87,
             height: 38,
             alignment: Alignment.center,
-            //color: Colors.amberAccent,
             decoration: BoxDecoration(
-                color: Colors.amberAccent,
-                borderRadius: BorderRadius.all(Radius.circular(10))
+              color: Colors.amberAccent,
+              borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
             child: DropdownButton<String>(
               value: _selectedItem,
@@ -388,6 +390,20 @@ class _PlannerActionBar2State extends State<PlannerActionBar2> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class SettingScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Settings'),
+      ),
+      body: Center(
+        child: Text('Settings Page'),
       ),
     );
   }
